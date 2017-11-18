@@ -1,0 +1,28 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+_obj
+_test
+
+# Architecture specific extensions/prefixes
+*.exe
+*.test
+*.prof
+
+# Ignore generated self-signed certs
+public.key
+private.key
+private.pem
+
+# Ignore binary
+/abcweb
+
+# Ignore root models folder if present (for testing)
+/models
+
+# Ignore root config files if present (for testing)
+/database.toml
+/config.toml

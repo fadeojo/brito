@@ -1,0 +1,25 @@
+# This file represents the configuration used to generate your app.
+# It is loaded by some abcweb commands, for example, the "gen config" command.
+# This allows your fresh configuration to mimic the correct state of your app.
+app-path = '/Users/fadeojo/golang/src/github.com/fadeojo/brito'
+import-path = 'github.com/fadeojo/brito'
+app-name = 'brito'
+app-env-name = 'BRITO'
+tls-common-name = 'localhost'
+prod-storer = 'disk'
+dev-storer = 'cookie'
+default-env = 'prod'
+bootstrap = 'regular'
+no-bootstrap-js = true
+no-gulp = true
+no-font-awesome = true
+no-live-reload = false
+no-tls-certs = false
+no-readme = false
+no-config = false
+no-sessions = true
+force-overwrite = false
+skip-npm-install = false
+skip-dep-ensure = false
+skip-git-init = false
+silent = false

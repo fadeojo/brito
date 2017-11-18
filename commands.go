@@ -1,0 +1,83 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"github.com/fadeojo/brito/app"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"github.com/volatiletech/abcweb/abcconfig"
+	"github.com/volatiletech/abcweb/abcdatabase"
+	"github.com/volatiletech/abcweb/abcserver"
+	"github.com/volatiletech/mig"
+)
+
+// rootSetup sets up the root cobra command
+func rootSetup(a *app.App) {
+	a.Root = &cobra.Command{
+		Use:   "brito [flags]",
+		Short: "brito web app server",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return abcserver.StartServer(a.Config.Server, a.Router, a.Log)
+		},
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return Setup(a, cmd.Flags())
+		},
+	}
+
+	// Register the cmd-line flags for --help output
+	a.Root.Flags().AddFlagSet(abcconfig.NewFlagSet())
+}
+
+// migrateSetup sets up the migrate command and binds it to the root command.
+//
+// The migrate up and down command is built into the app so that you do not
+// need to deploy abcweb to your server to run your migrations.
+func migrateSetup(a *app.App) {
+	migrate := &cobra.Command{
+		Use:   "migrate",
+		Short: "Run your database migrations",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c := abcconfig.NewConfig("")
+
+			v, err := c.Bind(cmd.Flags(), a.Config)
+			if err != nil {
+				return errors.Wrap(err, "cannot bind app config")
+			}
+
+			if _, err := os.Stat(filepath.Join("db", "migrations")); err != nil {
+				return errors.Wrap(err, "could not find migrations folder")
+			}
+
+			connStr, err := abcdatabase.GetConnStr(a.Config.DB)
+			if err != nil {
+				return errors.Wrap(err, "could not create connection string")
+			}
+
+			if v.GetBool("down") {
+				name, err := mig.Down(a.Config.DB.DB, connStr, filepath.Join("db", "migrations"))
+				if err != nil {
+					return errors.Wrap(err, "call to mig down failed")
+				}
+				fmt.Printf("rolled back migration %q\n", name)
+			} else {
+				count, err := mig.Up(a.Config.DB.DB, connStr, filepath.Join("db", "migrations"))
+				if err != nil {
+					return errors.Wrap(err, "call to mig up failed")
+				}
+				fmt.Printf("migrated %d database migrations\n", count)
+			}
+
+			return nil
+		},
+	}
+
+	migrate.Flags().BoolP("down", "d", false, "Roll back the database migration version by one")
+	migrate.Flags().StringP("env", "e", "prod", "The database config file environment to load")
+	// Add the database config flags
+	migrate.Flags().AddFlagSet(abcconfig.NewDBFlagSet())
+
+	a.Root.AddCommand(migrate)
+}
