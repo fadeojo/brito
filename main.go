@@ -47,7 +47,7 @@ func Setup(a *app.App, flags *pflag.FlagSet) error {
 	}
 
 	a.Render = rendering.New(a, "templates", a.AssetsManifest)
-	a.Router = routes.NewRouter(a, app.NewMiddlewares(a.Config, nil, a.Log))
+	a.Router = routes.NewRouter(a, app.NewMiddlewares(a.Config, a.Log))
 
 	if err := db.InitDB(a.Config.DB); err != nil {
 		return errors.Wrap(err, "failed to create global db connection")

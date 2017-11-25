@@ -109,3 +109,7 @@
 
 [[constraint]]
 	name = "gopkg.in/volatiletech/null.v6"
+
+[[constraint]]
+  branch = "v1.4"
+  name = "github.com/googollee/go-socket.io"

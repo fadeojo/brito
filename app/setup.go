@@ -67,7 +67,7 @@ func NewLogger(cfg *Config) (*zap.Logger, error) {
 
 // NewMiddlewares returns a list of middleware to be used by the router.
 // See https://github.com/go-chi/chi#middlewares and abcweb readme for extras.
-func NewMiddlewares(cfg *Config, nil, log *zap.Logger) []abcmiddleware.MiddlewareFunc {
+func NewMiddlewares(cfg *Config, log *zap.Logger) []abcmiddleware.MiddlewareFunc {
 	m := abcmiddleware.Middleware{
 		Log: log,
 	}

@@ -34,3 +34,6 @@ dist
 brito
 brito.exe
 brito.zip
+
+# intellij
+.idea
